@@ -117,7 +117,7 @@ namespace WindowsFormsApp1
             WeatherInfo info = new WeatherInfo();
 
             //Application.Run(new Form1(getWeather().Result));
-            Application.Run(new Form1(info().RunWeather()));
+            Application.Run(new Form1(info.RunWeather()));
         }
     }
 }

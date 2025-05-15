@@ -26,9 +26,6 @@ namespace WindowsFormsApp1
     {
         OpenCvSharp.VideoCapture video;
         Mat mImage = new Mat(1080, 1920, MatType.CV_8UC3);
-        private string[] info = new string[6];
-        System.Threading.Timer thread;
-        int num;
 
 
         /*
@@ -40,17 +37,9 @@ namespace WindowsFormsApp1
             info[5]: city name
          */
 
-        public Form1()
+        public Form1(string[] info)
         {
-            InitializeComponent(string[] info);
-            num = 0;
-            //weatherInfo
-            //WeatherInfo weather = new WeatherInfo();
-            
-            //weatherTimer.Enabled = true;
-            //weatherTimer.Interval = 600000;
-
-            //this.thread = new System.Threading.Timer();
+            InitializeComponent();
 
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
@@ -79,14 +68,6 @@ namespace WindowsFormsApp1
         private void Form1_Load(object sender, EventArgs e)
         {
             const int my_padding = 20;
-            
-            //WeatherInfo weather = new WeatherInfo();
-            //this.info = weather.RunWeather();
-            //thread
-
-            //today_temp.Text = info[1];
-            //weather_icon_des.Text = info[0];
-            //position.Text = info[5];
 
             try
             {
@@ -102,7 +83,6 @@ namespace WindowsFormsApp1
                 weather_icon.Top = weather_icon.Height + my_padding;
 
                 position.Left = (this.Width - (my_padding * 7 + today_temp.Width)); // 오른쪽 상단 배치
-                today_temp.Text = num.ToString();
 
                 
             }
@@ -130,7 +110,6 @@ namespace WindowsFormsApp1
             //weather_icon_des.Text = this.info[0];
             //position.Text = this.info[5];
 
-            num++;
             //weatherTimer
         }
 
