@@ -14,6 +14,94 @@ using System.Diagnostics;
 
 namespace WindowsFormsApp1
 {
+
+    public class WeatherInfo
+    {
+        public WeatherInfo()
+        {
+
+        }
+
+        public string[] RunWeather()
+        {
+            return GetWeather().Result;
+        }
+        static async Task<string[]> GetWeather()
+        {
+            RegistryKey reg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\my_weather");
+            string ApiKey = reg.GetValue("my_key").ToString();
+
+            dynamic res = new JObject();
+
+            Task<string[]> position = GetPosition();
+            string lat = position.Result[0];
+            string lon = position.Result[1];
+            var client = new RestClient();
+            var request = new RestRequest("https://api.openweathermap.org/data/2.5/weather?lat="
+                + lat
+                + "&lon="
+                + lon
+                + "&appid="
+                + ApiKey
+                + "&units=metric&lang=kr");
+
+            string[] ret = new string[6];
+
+            try
+            {
+                var response = await client.GetAsync(request);
+                res = JObject.Parse(response.Content);
+
+                //Console.WriteLine(res["weather"][0]["description"]);
+                ret[0] = res["weather"][0]["description"];
+                ret[1] = res["main"]["temp"];
+                ret[2] = res["main"]["temp_min"];
+                ret[3] = res["main"]["temp_max"];
+                ret[4] = res["main"]["feels_like"];
+                ret[5] = position.Result[2];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return ret;
+        }
+
+        static async Task<string[]> GetPosition()
+        {
+            dynamic res = new JObject();
+
+            string p_ip = GetIp();
+            var client = new RestClient();
+            var request = new RestRequest("http://ip-api.com/json/" + p_ip);
+            string[] ret = new string[3];
+            try
+            {
+                var response = await client.GetAsync(request);
+                res = JObject.Parse(response.Content);
+
+                ret[0] = res["lat"];
+                ret[1] = res["lon"];
+                ret[2] = res["city"];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return ret;
+        }
+
+        static string GetIp()
+        {
+            string p_ip = new WebClient().DownloadString("http://ipinfo.io/ip").Trim();
+
+            return p_ip;
+        }
+
+    }
+
     static class Program
     {
         /// <summary>
@@ -25,9 +113,11 @@ namespace WindowsFormsApp1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
+            WeatherInfo info = new WeatherInfo();
 
             //Application.Run(new Form1(getWeather().Result));
-            Application.Run(new Form1());
+            Application.Run(new Form1(info().RunWeather()));
         }
     }
 }
