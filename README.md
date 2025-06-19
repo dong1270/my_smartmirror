@@ -1,5 +1,8 @@
 # 스마트 미러
 
+## Demo
+![Demo.png](./Demo.png)
+
 ## Description
 OpenweatherAPI와 WinForm, Registry를 활용한 스마트미러
 
